@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lights Out</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    .header {
+        background-color: #f2f2f2;
+        padding: 20px;
+        margin-bottom: 50px;
+    }
+    .header h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #333;
+    }
+    .container {
+        display: inline-block;
+    }
+    .cell {
+        width: 50px;
+        height: 50px;
+        background-color: #fff;
+        border: 1px solid #000;
+        display: inline-block;
+        cursor: pointer;
+    }
+    .cell.is-off {
+        background-color: #000;
+    }
+    .addendum {
+        margin-top: 50px;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: left;
+    }
+</style>
+<div class="header">
+    <h1>Lights Out</h1>
+</div>
+</head>
+<body>
+<div class="container" id="board"></div>
+<div class="addendum">
+    <h2>Addendum</h2>
+    <p>
+        <strong>Process and Creative Choices:</strong> The development of this game started with setting up the basic structure and styling of the game board. The game logic was implemented in JavaScript, beginning with initializing the game board with a random but solvable configuration. This was achieved by simulating clicks on the squares to generate a configuration that could be solved by the player. The logic to toggle a square and its neighbors was crucial for the game's mechanics. Finally, a win condition check was added after each move to determine if the game is solved.
+    </p>
+    <p>
+        <strong>Challenges and Solutions:</strong> The main challenge was ensuring the game board starts in a solvable state. To overcome this, a simple but effective approach of randomly toggling squares until a solvable configuration is achieved was used. This approach guarantees that the game is always winnable, as it starts from a configuration that can be solved by toggling squares.
+    </p>
+    <p>
+        <strong>Insights:</strong> This project reinforced the importance of planning the game logic before diving into the implementation. It also highlighted the power of CSS for styling interactive elements like game squares. The process of toggling squares and checking for a win condition was straightforward, thanks to the modular approach of defining separate functions for each task.
+    </p>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const size = 5; // Size of the board (size x size)
+  const board = document.getElementById("board");
+  const cells = [];
+
+  // Create the initial board
+  for (let i = 0; i < size; i++) {
+    cells[i] = [];
+    for (let j = 0; j < size; j++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.row = i;
+      cell.dataset.col = j;
+      cell.addEventListener("click", toggleCell);
+      board.appendChild(cell);
+      cells[i][j] = cell;
+    }
+    board.appendChild(document.createElement("br"));
+  }
+
+  // Randomly toggle cells to create initial solvable configuration
+  for (let i = 0; i < size * size * 2; i++) {
+    const row = Math.floor(Math.random() * size);
+    const col = Math.floor(Math.random() * size);
+    toggleNeighbors(row, col);
+  }
+
+  function toggleCell() {
+    const row = parseInt(this.dataset.row);
+    const col = parseInt(this.dataset.col);
+    toggleNeighbors(row, col);
+    checkWin();
+  }
+
+  function toggleNeighbors(row, col) {
+    toggle(row, col);
+    toggle(row - 1, col);
+    toggle(row + 1, col);
+    toggle(row, col - 1);
+    toggle(row, col + 1);
+  }
+
+  function toggle(row, col) {
+    if (row >= 0 && row < size && col >= 0 && col < size) {
+      cells[row][col].classList.toggle("is-off");
+    }
+  }
+
+  function checkWin() {
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j < size; j++) {
+        if (cells[i][j].classList.contains("is-off")) {
+          return; // If any cell is still off, game is not won
+        }
+      }
+    }
+    window.alert("You win!");
+  }
+});
+</script>
+<footer>
+    <p>Last updated: 
+        <span id="lastModified"></span>
+    </p>
+</footer>
+<script type="text/javascript">
+     var x = document.lastModified;
+     document.getElementById('lastModified').textContent = x;
+</script>
+
+</body>
+</html>
